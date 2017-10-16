@@ -1,5 +1,6 @@
-import numpy as np
 import tensorflow as tf
+tf.logging.set_verbosity(tf.logging.ERROR)
+import numpy as np
 import gym
 import logz
 import scipy.signal
@@ -8,6 +9,7 @@ import time
 import inspect
 from multiprocessing import Process
 
+import tensorflow as tf
 #============================================================================================#
 # Utilities
 #============================================================================================#
@@ -32,20 +34,25 @@ def build_mlp(
     #
     # Hint: use tf.layers.dense
     #========================================================================================#
-
+    assert n_layers >=1
     with tf.variable_scope(scope):
-        # YOUR_CODE_HERE
-        pass
+        net = input_placeholder
+        for _ in range(0, n_layers - 1):
+          net = tf.layers.dense(net, size, activation=activation)
+
+        net = tf.layers.dense(net, output_size, activation=output_activation)
+
+
+    return net
+
 
 def pathlength(path):
     return len(path["reward"])
 
 
-
-#============================================================================================#
+# ============================================================================================#
 # Policy Gradient
-#============================================================================================#
-
+# ============================================================================================#
 def train_PG(exp_name='',
              env_name='CartPole-v0',
              n_iter=100, 
